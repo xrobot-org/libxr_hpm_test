@@ -1,0 +1,131 @@
+version: 1
+project:
+  board: hpm5361evklite
+  soc: HPM5361
+  hpmpc: boards/hpm5361evklite/pinmux.hpmpc
+  pinmux_functions:
+  - init_all_pins
+  package: BGA289
+  sdk: 1.11.0
+spi:
+  SPI1:
+    auto_clock: true
+    clock_source: pll0_clk0
+    clock_divider: 48
+    peripheral_clock_hz: 20000000
+    prescaler: DIV_1
+    actual_sclk_hz: 20000000
+    enabled: true
+    buffer_size: 256
+    sclk_hz: 20000000
+    spi_mode: 0
+    clock_polarity: LOW
+    clock_phase: EDGE_1
+    cs_active_low: true
+    double_buffer: false
+    use_dma: false
+    use_gpio_cs: true
+    pins:
+      CS0: PA26
+      SCLK: PA27
+      MOSI: PA29
+      MISO: PA28
+i2c:
+  I2C2:
+    auto_clock: true
+    clock_source: osc24m
+    clock_divider: 1
+    peripheral_clock_hz: 24000000
+    enabled: true
+    bus_hz: 100000
+    address_mode: 7bit
+    use_dma: false
+    pins:
+      SCL: PB08
+      SDA: PB09
+  I2C3:
+    auto_clock: true
+    clock_source: osc24m
+    clock_divider: 1
+    peripheral_clock_hz: 24000000
+    enabled: true
+    bus_hz: 100000
+    address_mode: 7bit
+    use_dma: false
+    pins:
+      SDA: PB12
+      SCL: PB13
+uart:
+  UART0:
+    auto_clock: true
+    clock_source: osc24m
+    clock_divider: 1
+    peripheral_clock_hz: 24000000
+    enabled: false
+    baudrate: 115200
+    rx_buffer_size: 256
+    tx_buffer_size: 256
+    tx_queue_size: 5
+    parity: NO_PARITY
+    data_bits: 8
+    stop_bits: 1
+    use_dma: true
+    pins:
+      TXD: PA00
+      RXD: PA01
+  UART3:
+    auto_clock: true
+    clock_source: osc24m
+    clock_divider: 1
+    peripheral_clock_hz: 24000000
+    enabled: true
+    baudrate: 115200
+    rx_buffer_size: 256
+    tx_buffer_size: 256
+    tx_queue_size: 5
+    parity: NO_PARITY
+    data_bits: 8
+    stop_bits: 1
+    use_dma: true
+    pins:
+      TXD: PB15
+      RXD: PB14
+    tx_dma_channel: 0
+    rx_dma_channel: 1
+mcan:
+  MCAN0:
+    auto_clock: true
+    clock_source: pll0_clk0
+    clock_divider: 12
+    peripheral_clock_hz: 80000000
+    enabled: true
+    mode: can
+    bitrate: 1000000
+    queue_size: 8
+    sample_point: 0.75
+    loopback: false
+    listen_only: false
+    one_shot: false
+    pins:
+      RXD: PA01
+      TXD: PA00
+  MCAN2:
+    auto_clock: true
+    clock_source: pll0_clk0
+    clock_divider: 12
+    peripheral_clock_hz: 80000000
+    enabled: true
+    mode: fdcan
+    bitrate: 1000000
+    queue_size: 8
+    sample_point: 0.75
+    loopback: false
+    listen_only: false
+    one_shot: false
+    pins:
+      TXD: PB08
+      RXD: PB09
+    data_bitrate: 2500000
+    data_sample_point: 0.75
+    brs: true
+    esi: false

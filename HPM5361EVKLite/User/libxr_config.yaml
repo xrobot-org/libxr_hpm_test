@@ -1,0 +1,62 @@
+SYSTEM: None
+pinmux_functions:
+- init_all_pins
+disabled_peripherals:
+- i2c2
+- uart0
+SPI:
+  spi1:
+    buffer_size: 256
+    sclk_hz: 20000000
+    spi_mode: 0
+    prescaler: DIV_1
+    actual_sclk_hz: 20000000
+    use_gpio_cs: true
+    clock_polarity: LOW
+    clock_phase: EDGE_1
+    cs_active_low: true
+    double_buffer: false
+I2C:
+  i2c3:
+    bus_hz: 100000
+    address_mode: 7bit
+    peripheral_clock_hz: 24000000
+UART:
+  uart3:
+    baudrate: 115200
+    rx_buffer_size: 256
+    tx_buffer_size: 256
+    tx_queue_size: 5
+    parity: NO_PARITY
+    data_bits: 8
+    stop_bits: 1
+    peripheral_clock_hz: 24000000
+    rx_dma_channel: 1
+    tx_dma_channel: 0
+CAN:
+  mcan0:
+    bitrate: 1000000
+    peripheral_clock_hz: 80000000
+    loopback: false
+    listen_only: false
+    one_shot: false
+    queue_size: 8
+    index: 0
+    sample_point: 0.75
+FDCAN:
+  mcan2:
+    bitrate: 1000000
+    peripheral_clock_hz: 80000000
+    loopback: false
+    listen_only: false
+    one_shot: false
+    queue_size: 8
+    index: 2
+    sample_point: 0.75
+    data_bitrate: 2500000
+    data_sample_point: 0.75
+    brs: true
+    esi: false
+PWM: {}
+GPIO: {}
+device_aliases: {}

@@ -1,0 +1,4 @@
+[submodule "libxr"]
+	path = libxr
+	url = https://github.com/CaFeZn/libxr.git
+	branch = feat/hpm-uart-peripheral-config

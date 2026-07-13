@@ -1,0 +1,56 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "hpm5361evklite-flash-xip-debug",
+            "displayName": "HPM5361EVKLite flash_xip Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/hpm5361evklite-flash-xip-debug",
+            "cacheVariables": {
+                "BOARD": "hpm5361evklite",
+                "BOARD_SEARCH_PATH": "${sourceDir}/boards",
+                "HPM_BUILD_TYPE": "flash_xip",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "environment": {
+                "HPM_SDK_BASE": "$penv{HPM_SDK_BASE}",
+                "GNURISCV_TOOLCHAIN_PATH": "$penv{GNURISCV_TOOLCHAIN_PATH}",
+                "PATH": "$penv{PATH}"
+            }
+        },
+        {
+            "name": "hpm5361evklite-ram-debug",
+            "displayName": "HPM5361EVKLite RAM Debug",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/hpm5361evklite-ram-debug",
+            "cacheVariables": {
+                "BOARD": "hpm5361evklite",
+                "BOARD_SEARCH_PATH": "${sourceDir}/boards",
+                "HPM_BUILD_TYPE": "ram",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "environment": {
+                "HPM_SDK_BASE": "$penv{HPM_SDK_BASE}",
+                "GNURISCV_TOOLCHAIN_PATH": "$penv{GNURISCV_TOOLCHAIN_PATH}",
+                "PATH": "$penv{PATH}"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "hpm5361evklite-flash-xip-debug",
+            "configurePreset": "hpm5361evklite-flash-xip-debug",
+            "jobs": 8
+        },
+        {
+            "name": "hpm5361evklite-ram-debug",
+            "configurePreset": "hpm5361evklite-ram-debug",
+            "jobs": 8
+        }
+    ]
+}
