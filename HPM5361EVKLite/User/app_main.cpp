@@ -9,6 +9,8 @@
 #include "app_framework.hpp"
 
 /* User Code Begin 1 */
+#include "hpm_gpio_drv.h"
+#include "stdio.hpp"
 /* User Code End 1 */
 
 ATTR_PLACE_AT_NONCACHEABLE static uint8_t uart3_rx_dma_buffer[256];
@@ -62,9 +64,53 @@ extern "C" void app_main(void)
       LibXR::Entry<LibXR::CAN>{mcan0, {"mcan0"}},
       LibXR::Entry<LibXR::FDCAN>{mcan2, {"mcan2"}});
   /* User Code Begin 3 */
+  // UART0 PA00/PA01 belongs to MCAN0 in this configuration. Console traffic
+  // shares the declared UART3 owner rather than bypassing its DMA state.
+  LibXR::STDIO::read_ = uart3.read_port_;
+  LibXR::STDIO::write_ = uart3.write_port_;
+  constexpr uint32_t poll_ms = 20U;
+  uint32_t elapsed_ms = 0U;
+  uint32_t heartbeat_ms = 0U;
+  uint32_t heartbeat_count = 0U;
+  uint8_t last_button_state = gpio_read_pin(
+      BOARD_APP_GPIO_CTRL, BOARD_APP_GPIO_INDEX, BOARD_APP_GPIO_PIN);
+  LibXR::ReadOperation read_op;
+
+  LibXR::STDIO::Printf<"HPM5361EVKLite GPIO demo\r\n">();
+  LibXR::STDIO::Printf<"UART3 PB15 TX / PB14 RX, 115200 8N1\r\n">();
+  LibXR::STDIO::Printf<"LED: PA10 active low, button: PA03 active high\r\n">();
   while (true)
   {
-    LibXR::Thread::Sleep(UINT32_MAX);
+    const uint8_t button_state = gpio_read_pin(
+        BOARD_APP_GPIO_CTRL, BOARD_APP_GPIO_INDEX, BOARD_APP_GPIO_PIN);
+    while (uart3.read_port_->Size() != 0U)
+    {
+      uint8_t byte;
+      const auto result = uart3.Read({&byte, sizeof(byte)}, read_op);
+      if (result != LibXR::ErrorCode::OK) { break; }
+      const char printable = byte >= 0x20U && byte <= 0x7EU ? char(byte) : '.';
+      LibXR::STDIO::Printf<"rx 0x%02x '%c'\r\n">(static_cast<unsigned>(byte), printable);
+    }
+    if (button_state != last_button_state)
+    {
+      LibXR::STDIO::Printf<"button: %s\r\n">(
+          button_state == BOARD_BUTTON_PRESSED_VALUE ? "pressed" : "released");
+      last_button_state = button_state;
+    }
+    if (elapsed_ms >= 500U)
+    {
+      board_led_toggle();
+      elapsed_ms = 0U;
+    }
+    if (heartbeat_ms >= 1000U)
+    {
+      LibXR::STDIO::Printf<"heartbeat %lu, button=%u\r\n">(
+          static_cast<unsigned long>(heartbeat_count++), static_cast<unsigned>(button_state));
+      heartbeat_ms = 0U;
+    }
+    LibXR::Thread::Sleep(poll_ms);
+    elapsed_ms += poll_ms;
+    heartbeat_ms += poll_ms;
   }
   /* User Code End 3 */
 }
