@@ -9,10 +9,9 @@ them with signed HPM Pinmux Tool working copies.
 
 ## Dependency scope
 
-The target requires LibXR HPM UART, SPI and MCAN adapters compatible with the
-current RW interfaces. Bare mainline `c5730499` lacks these adapters; the HPM
-adapter migration and the downstream gitlink must be delivered together.
-A successful build against an older fork is not mainline compatibility evidence.
+The committed LibXR submodule pins the mainline `dev` adapters for HPM UART,
+SPI and MCAN. Initialize that exact gitlink; an older fork is not a substitute
+for this dependency.
 
 The HPM generator is installed from an exact source revision until that command
 is included in a published release. Use a dedicated virtual environment rather
@@ -20,7 +19,7 @@ than replacing a working STM32 generator installation.
 
 ## Requirements
 
-- HPM SDK with `HPM_SDK_BASE` configured
+- HPM SDK 1.11.0 with `HPM_SDK_BASE` configured
 - HPM RISC-V GCC toolchain with `GNURISCV_TOOLCHAIN_PATH` configured
 - CMake and Ninja on `PATH`
 - The HPM-capable generator revision pinned below (not the STM32-only PyPI 5.2.x release)
@@ -28,6 +27,7 @@ than replacing a working STM32 generator installation.
 
 ```sh
 git submodule update --init --recursive
+python -m pip install -r "$HPM_SDK_BASE/scripts/requirements.txt"
 python -m pip install "libxr @ git+https://github.com/CaFeZn/LibXR_CppCodeGenerator.git@6b35a454cccc0aef8d9221718b91b6b151149a42"
 ./test.sh
 ```
@@ -36,6 +36,7 @@ On Windows PowerShell:
 
 ```powershell
 git submodule update --init --recursive
+python -m pip install -r "$env:HPM_SDK_BASE/scripts/requirements.txt"
 python -m pip install "libxr @ git+https://github.com/CaFeZn/LibXR_CppCodeGenerator.git@6b35a454cccc0aef8d9221718b91b6b151149a42"
 ./test.ps1
 ```
@@ -45,6 +46,9 @@ Pass one or more target directory names to build only those targets:
 ```sh
 ./test.sh HPM5361EVKLite
 ```
+
+The project enables real compiler feature probes before the SDK first checks
+the toolchain, so the SDK installation does not need a local CMake patch.
 
 Each target executes `xr_hpm_cfg generate`, configures the HPM SDK project, and
 links the complete firmware image. Generated build directories and

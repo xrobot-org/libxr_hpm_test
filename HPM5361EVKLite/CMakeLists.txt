@@ -10,6 +10,8 @@ set(CONFIG_DMA_MGR 1)
 # UART0 pins are assigned to MCAN0. UART3 is owned by LibXR after app startup.
 set(CONFIG_NDEBUG_CONSOLE 1)
 
+set(CMAKE_USER_MAKE_RULES_OVERRIDE "${CMAKE_CURRENT_LIST_DIR}/cmake/compiler_probe.cmake")
+
 find_package(hpm-sdk REQUIRED HINTS $ENV{HPM_SDK_BASE})
 
 project(hpm5361evklite_gpio C CXX ASM)
