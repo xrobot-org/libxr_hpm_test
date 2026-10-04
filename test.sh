@@ -9,11 +9,6 @@ if [ -z "${HPM_SDK_BASE:-}" ]; then
     exit 1
 fi
 
-if ! command -v xr_hpm_cfg >/dev/null 2>&1; then
-    echo "xr_hpm_cfg is not installed or not on PATH." >&2
-    exit 1
-fi
-
 if [ ! -f "$repo_root/libxr/CMakeLists.txt" ]; then
     echo "LibXR submodule is missing. Run: git submodule update --init --recursive" >&2
     exit 1
@@ -22,8 +17,8 @@ fi
 if [ "$#" -gt 0 ]; then
     targets="$*"
 else
-    targets=$(find "$repo_root" -mindepth 2 -maxdepth 2 -name hpm_peripherals.yaml \
-        -exec dirname {} \; | sort)
+    targets=$(find "$repo_root" -mindepth 2 -maxdepth 2 -name CMakeLists.txt \
+        ! -path "$repo_root/libxr/*" -exec dirname {} \; | sort)
 fi
 
 if [ -z "$targets" ]; then
@@ -37,20 +32,10 @@ for target in $targets; do
         *) target_dir="$repo_root/$target" ;;
     esac
 
-    if [ ! -f "$target_dir/hpm_peripherals.yaml" ]; then
+    if [ ! -f "$target_dir/CMakeLists.txt" ]; then
         echo "Target directory not found: $target" >&2
         exit 1
     fi
-
-    echo "==> Generating $(basename "$target_dir")"
-    xr_hpm_cfg generate \
-        -d "$target_dir" \
-        --peripheral-config hpm_peripherals.yaml \
-        --libxr-config User/libxr_config.yaml \
-        --config-output .config.yaml \
-        -o User/app_main.cpp \
-        --hw-cntr \
-        --format json
 
     echo "==> Building $(basename "$target_dir")"
     cmake -S "$target_dir" -B "$target_dir/build" -G Ninja \

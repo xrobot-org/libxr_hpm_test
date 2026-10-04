@@ -10,17 +10,16 @@ if (-not $env:HPM_SDK_BASE) {
     throw 'HPM_SDK_BASE is not set.'
 }
 
-if (-not (Get-Command xr_hpm_cfg -ErrorAction SilentlyContinue)) {
-    throw 'xr_hpm_cfg is not installed or not on PATH.'
-}
-
 if (-not (Test-Path -LiteralPath "$RepoRoot/libxr/CMakeLists.txt")) {
     throw 'LibXR submodule is missing. Run: git submodule update --init --recursive'
 }
 
 if (-not $Targets) {
     $Targets = Get-ChildItem -LiteralPath $RepoRoot -Directory |
-        Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName 'hpm_peripherals.yaml') } |
+        Where-Object {
+            $_.Name -ne 'libxr' -and
+            (Test-Path -LiteralPath (Join-Path $_.FullName 'CMakeLists.txt'))
+        } |
         ForEach-Object Name
 }
 
@@ -35,21 +34,8 @@ foreach ($Target in $Targets) {
         [System.IO.Path]::GetFullPath((Join-Path $RepoRoot $Target))
     }
 
-    if (-not (Test-Path -LiteralPath (Join-Path $TargetDirectory 'hpm_peripherals.yaml'))) {
+    if (-not (Test-Path -LiteralPath (Join-Path $TargetDirectory 'CMakeLists.txt'))) {
         throw "Target directory not found: $Target"
-    }
-
-    Write-Host "==> Generating $([System.IO.Path]::GetFileName($TargetDirectory))"
-    & xr_hpm_cfg generate `
-        -d $TargetDirectory `
-        --peripheral-config hpm_peripherals.yaml `
-        --libxr-config User/libxr_config.yaml `
-        --config-output .config.yaml `
-        -o User/app_main.cpp `
-        --hw-cntr `
-        --format json
-    if ($LASTEXITCODE -ne 0) {
-        throw "xr_hpm_cfg failed with exit code $LASTEXITCODE"
     }
 
     $BuildDirectory = Join-Path $TargetDirectory 'build'
