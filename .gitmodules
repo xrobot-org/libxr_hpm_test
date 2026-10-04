@@ -1,4 +1,3 @@
 [submodule "libxr"]
 	path = libxr
-	url = https://github.com/CaFeZn/libxr.git
-	branch = feat/hpm-uart-peripheral-config
+	url = https://github.com/xrobot-org/libxr.git
