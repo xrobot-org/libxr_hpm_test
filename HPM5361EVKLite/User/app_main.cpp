@@ -10,7 +10,7 @@ extern "C" void app_main(void)
 {
   static LibXR::HPMTimebase timebase;
   UNUSED(timebase);
-  static LibXR::HPMI2C i2c3(BOARD_APP_I2C_BASE, BOARD_APP_I2C_CLK_NAME, true, {100000U});
+  static LibXR::HPMI2C i2c3(BOARD_APP_I2C_BASE, BOARD_APP_I2C_CLK_NAME, {100000U});
   UNUSED(i2c3);
 
   // printf() and the byte report use the SDK console, which CMakeLists.txt
