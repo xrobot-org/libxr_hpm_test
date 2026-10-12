@@ -19,7 +19,6 @@ endif()
 
 set(LIBXR_SYSTEM None)
 set(LIBXR_DRIVER hpm)
-set(LIBXR_NO_EIGEN True)
 
 add_subdirectory("${LIBXR_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/libxr")
 
